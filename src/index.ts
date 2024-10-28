@@ -95,10 +95,13 @@ export interface TypedIpcRenderer<
   ): Promise<ReturnType<IpcCommands[K]>>;
 }
 
-export interface TypedWebContents<IpcEvents extends InputMap>
-  extends WebContents {
+export interface TypedWebContents<
+  IpcEvents extends InputMap,
+  IpcCommands extends InputMap
+> extends WebContents {
   send<K extends keyof IpcEvents>(
     channel: K,
     ...args: Parameters<IpcEvents[K]>
   ): void;
+  ipc: TypedIpcMain<IpcEvents, IpcCommands>;
 }

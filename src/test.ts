@@ -36,7 +36,7 @@ typedIpcRenderer.on('configUpdated', (_, newConfig, oldConfig) => {
 
 webContents
   .getAllWebContents()
-  .forEach((renderer: TypedWebContents<Events>) => {
+  .forEach((typedWebContents: TypedWebContents<Events, Commands>) => {
     const newConfig = {
       a: 2,
       b: 'text2',
@@ -45,5 +45,17 @@ webContents
       a: 1,
       b: 'text1',
     };
-    renderer.send('configUpdated', newConfig, oldConfig);
+    typedWebContents.send('configUpdated', newConfig, oldConfig);
+
+    typedWebContents.ipc.on('configUpdated', (_, newConfig, oldConfig) => {
+      console.log(newConfig, oldConfig);
+    });
+
+    typedWebContents.ipc.handle('fetchConfig', () => {
+      return { a: 2, b: 'text2' };
+    });
+
+    typedWebContents.ipc.handle('updateConfig', (_, newConfig) => {
+      console.log(newConfig);
+    });
   });

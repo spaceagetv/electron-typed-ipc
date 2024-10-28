@@ -30,7 +30,7 @@ type Commands = {
 ### 3. Add types to `ipcMain` and `ipcRenderer`
 
 ```ts
-import { TypedIpcMain, TypedIpcRenderer } from "electron-typed-ipc";
+import { TypedIpcMain, TypedIpcRenderer } from 'electron-typed-ipc';
 
 const typedIpcMain = ipcMain as TypedIpcMain<Events, Commands>;
 const typesIpcRenderer = ipcRenderer as TypedIpcRenderer<Events, Commands>;
@@ -57,7 +57,10 @@ typedIpcRenderer.on('configUpdated', (_, newConfig, oldConfig) => {
 // main.ts
 webContents
   .getAllWebContents()
-  .forEach((renderer: TypedWebContents<Events>) => {
-    renderer.send('configUpdated', newConfig, oldConfig);
+  .forEach((typedWebContents: TypedWebContents<Events, Commands>) => {
+    typedWebContents.send('configUpdated', newConfig, oldConfig);
+    typedWebContents.ipc.handle('fetchConfig', () => {
+      return { a: 1, b: 'text' };
+    });
   });
 ```
